@@ -1,72 +1,54 @@
-import { useState, useEffect } from 'react'
-import { scaleBand, scaleLinear, max, line } from 'd3'
-import { useData } from './useData'
+import { useState, useEffect } from "react";
+import { scaleBand, scaleLinear, max, line } from "d3";
+import { useData } from "./useData";
+import { AxisBottom } from "./AxisBottom";
+import { AxisLeft } from "./AxisLeft";
 
-const width = window.screen.width
-const height = 1020
+const width = window.screen.width;
+const height = 1020;
 
 const margin = {
   top: 20,
   right: 20,
   bottom: 20,
-  left: 220
-}
+  left: 220,
+};
 
 function App() {
-  const data = useData()
+  const data = useData();
 
-  if(!data) {
-    return <pre>Loading..!</pre>
+  if (!data) {
+    return <pre>Loading..!</pre>;
   }
 
-  const innerHeight = height - margin.top - margin.bottom
-  const innerWidth = width - margin.left - margin.right
+  const innerHeight = height - margin.top - margin.bottom;
+  const innerWidth = width - margin.left - margin.right;
 
   const yScale = scaleBand()
-    .domain(data.map(d => d.Country))
-    .range([0, innerHeight])
+    .domain(data.map((d) => d.Country))
+    .range([0, innerHeight]);
 
   const xScale = scaleLinear()
-    .domain([0, max(data, d => d.Population)])
-    .range([0, innerWidth])
+    .domain([0, max(data, (d) => d.Population)])
+    .range([0, innerWidth]);
 
   return (
     <svg width={width} height={height}>
       <g transform={`translate(${margin.left}, ${margin.top})`}>
-        {xScale.ticks().map(tickValue => (
-          <g key={tickValue} transform={`translate(${xScale(tickValue)},0)`}>
-            <line 
-              y2={innerHeight} 
-              stroke="black"
-            />
-            <text 
-              y={innerHeight+3}
-              style={{textAnchor:'middle'}}
-              dy='0.71em'
-            >{tickValue}</text>
-          </g>
-        ))}
-        {yScale.domain().map(tickValue => (
-          <g key={tickValue} transform={`translate(0,${yScale(tickValue)+yScale.bandwidth()/2})`}>
-            <text 
-              x={-3}
-              dy='0.32em'
-              style={{textAnchor:'end'}}
-            >{tickValue}</text>
-          </g>
-        ))}
-        {data.map(d => (
-          <rect 
-            key={d.Country} 
-            x={0} 
-            y={yScale(d.Country)} 
-            width={xScale(d.Population)} 
-            height={yScale.bandwidth()} 
+        <AxisBottom xScale={xScale} innerHeight={innerHeight} />
+        <AxisLeft yScale={yScale} />
+        {data.map((d) => (
+          <rect
+            key={d.Country}
+            x={0}
+            y={yScale(d.Country)}
+            width={xScale(d.Population)}
+            height={yScale.bandwidth()}
           />
         ))}
       </g>
     </svg>
-  )
+  );
 }
 
-export default App
+export default App;
