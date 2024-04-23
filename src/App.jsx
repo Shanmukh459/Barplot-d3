@@ -11,7 +11,7 @@ const margin = {
   top: 20,
   right: 20,
   bottom: 20,
-  left: 20
+  left: 220
 }
 
 function App() {
@@ -59,6 +59,15 @@ function App() {
             >{tickValue}</text>
           </g>
         ))}
+        {yScale.domain().map(tickValue => (
+          <g transform={`translate(0,${yScale(tickValue)+yScale.bandwidth()/2})`}>
+            <text 
+              x={-3}
+              dy='0.32em'
+              style={{textAnchor:'end'}}
+            >{tickValue}</text>
+          </g>
+        ))}
         {data.map(d => (
           <rect 
             key={d.Country} 
@@ -68,7 +77,6 @@ function App() {
             height={yScale.bandwidth()} 
           />
         ))}
-
       </g>
     </svg>
   )
