@@ -1,20 +1,43 @@
 import { csv } from 'd3'
 import { useState, useEffect } from 'react'
+import { scaleBand, scaleLinear, max } from 'd3'
 
-const csvUrl = "https://gist.githubusercontent.com/Shanmukh459/2aee3b1c120bb3cf829b756e98e46804/raw/fd2320218c8bdd43220285524528161ce1e938e1/UN_Population_2019.csv"
+const csvUrl = "https://gist.githubusercontent.com/Shanmukh459/2aee3b1c120bb3cf829b756e98e46804/raw/fe3210df00d80c0fbbaa7b39f6b32a62ce1c9a1e/UN_Population_2100.csv"
+
+const width = window.screen.width
+const height = window.screen.height
 
 function App() {
 
   const [data, setData] = useState(null)
   useEffect(() => {
-    csv(csvUrl).then(data => setData(data))
+    const row = d => {
+      d.Population = +d[2100]
+      return d
+    }
+    csv(csvUrl, row).then(data => {
+      setData(data.slice(0, 10))
+    })
 
   }, [])
 
-  console.log(data)
+  if(!data) {
+    return <pre>Loading..!</pre>
+  }
+  console.log(data[0])
+
+  const yScale = scaleBand()
+    .domain(data.map(d => d.Country))
+    .range([0, height])
+
+  const xScale = scaleLinear()
+    .domain([0, max(data, d => d.Population)])
+    .range([0, width])
 
   return (
-    <h1>Hello</h1>
+    <svg width={width} height={height}>
+      {data.map(d => <rect key={d.Country} x={0} y={yScale(d.Country)} width={xScale(d.Population)} height={yScale.bandwidth()} />)}
+    </svg>
   )
 }
 
