@@ -1,8 +1,6 @@
-import { csv } from 'd3'
 import { useState, useEffect } from 'react'
 import { scaleBand, scaleLinear, max, line } from 'd3'
-
-const csvUrl = "https://gist.githubusercontent.com/Shanmukh459/2aee3b1c120bb3cf829b756e98e46804/raw/fe3210df00d80c0fbbaa7b39f6b32a62ce1c9a1e/UN_Population_2100.csv"
+import { useData } from './useData'
 
 const width = window.screen.width
 const height = 1020
@@ -15,18 +13,7 @@ const margin = {
 }
 
 function App() {
-
-  const [data, setData] = useState(null)
-  useEffect(() => {
-    const row = d => {
-      d.Population = +d[2100]
-      return d
-    }
-    csv(csvUrl, row).then(data => {
-      setData(data.slice(0, 10))
-    })
-
-  }, [])
+  const data = useData()
 
   if(!data) {
     return <pre>Loading..!</pre>
@@ -47,7 +34,7 @@ function App() {
     <svg width={width} height={height}>
       <g transform={`translate(${margin.left}, ${margin.top})`}>
         {xScale.ticks().map(tickValue => (
-          <g transform={`translate(${xScale(tickValue)},0)`}>
+          <g key={tickValue} transform={`translate(${xScale(tickValue)},0)`}>
             <line 
               y2={innerHeight} 
               stroke="black"
@@ -60,7 +47,7 @@ function App() {
           </g>
         ))}
         {yScale.domain().map(tickValue => (
-          <g transform={`translate(0,${yScale(tickValue)+yScale.bandwidth()/2})`}>
+          <g key={tickValue} transform={`translate(0,${yScale(tickValue)+yScale.bandwidth()/2})`}>
             <text 
               x={-3}
               dy='0.32em'
