@@ -47,13 +47,17 @@ function App() {
     <svg width={width} height={height}>
       <g transform={`translate(${margin.left}, ${margin.top})`}>
         {xScale.ticks().map(tickValue => (
-          <line 
-            x1={xScale(tickValue)} 
-            y1={0} 
-            x2={xScale(tickValue)} 
-            y2={innerHeight} 
-            stroke="black"
-          />
+          <g transform={`translate(${xScale(tickValue)},0)`}>
+            <line 
+              y2={innerHeight} 
+              stroke="black"
+            />
+            <text 
+              y={innerHeight+3}
+              style={{textAnchor:'middle'}}
+              dy='0.71em'
+            >{tickValue}</text>
+          </g>
         ))}
         {data.map(d => (
           <rect 
