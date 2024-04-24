@@ -1,6 +1,6 @@
 export const AxisLeft = ({ yScale }) =>
   yScale.domain().map((tickValue) => (
-    <g key={tickValue}>
+    <g className="tick" key={tickValue}>
       <text
         y={yScale(tickValue) + yScale.bandwidth() / 2}
         x={-3}

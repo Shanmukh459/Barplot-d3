@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { scaleBand, scaleLinear, max, line } from "d3";
+import { scaleBand, scaleLinear, max, format, tickFormat } from "d3";
 import { useData } from "./useData";
 import { AxisBottom } from "./AxisBottom";
 import { AxisLeft } from "./AxisLeft";
@@ -11,9 +11,11 @@ const height = 1020;
 const margin = {
   top: 20,
   right: 20,
-  bottom: 20,
-  left: 220,
+  bottom: 70,
+  left: 270,
 };
+
+const xAxisLabelOffset = 55;
 
 function App() {
   const data = useData();
@@ -28,7 +30,14 @@ function App() {
   const xValue = (d) => d.Population;
   const yValue = (d) => d.Country;
 
-  const yScale = scaleBand().domain(data.map(yValue)).range([0, innerHeight]);
+  const siFormat = format("0.2s");
+
+  const xAxisTickFormat = (tickValue) => siFormat(tickValue).replace("G", "B");
+
+  const yScale = scaleBand()
+    .domain(data.map(yValue))
+    .range([0, innerHeight])
+    .paddingInner(0.2);
 
   const xScale = scaleLinear()
     .domain([0, max(data, xValue)])
@@ -37,14 +46,27 @@ function App() {
   return (
     <svg width={width} height={height}>
       <g transform={`translate(${margin.left}, ${margin.top})`}>
-        <AxisBottom xScale={xScale} innerHeight={innerHeight} />
+        <AxisBottom
+          xScale={xScale}
+          innerHeight={innerHeight}
+          tickFormat={xAxisTickFormat}
+        />
         <AxisLeft yScale={yScale} />
+        <text
+          className="axis-label"
+          x={innerWidth / 2}
+          textAnchor="middle"
+          y={innerHeight + xAxisLabelOffset}
+        >
+          Population
+        </text>
         <Marks
           data={data}
           xScale={xScale}
           yScale={yScale}
           xValue={xValue}
           yValue={yValue}
+          tooltipFormat={xAxisTickFormat}
         />
       </g>
     </svg>

@@ -1,9 +1,13 @@
-export const AxisBottom = ({ xScale, innerHeight }) =>
+export const AxisBottom = ({ xScale, innerHeight, tickFormat }) =>
   xScale.ticks().map((tickValue) => (
-    <g key={tickValue} transform={`translate(${xScale(tickValue)},0)`}>
-      <line y2={innerHeight} stroke="black" />
+    <g
+      className="tick"
+      key={tickValue}
+      transform={`translate(${xScale(tickValue)},0)`}
+    >
+      <line y2={innerHeight} />
       <text y={innerHeight + 3} style={{ textAnchor: "middle" }} dy="0.71em">
-        {tickValue}
+        {tickFormat(tickValue)}
       </text>
     </g>
   ));
